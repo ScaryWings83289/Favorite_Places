@@ -13,7 +13,7 @@ import CustomOutlinedButton from "../Inputs/CustomOutlinedButton";
 // Constants Imports
 import { Colors } from "../../constants/colors";
 
-const ImagePicker = () => {
+const ImagePicker = ({ onTakeImage }) => {
   const [pickedImage, setPickedImage] = useState("");
 
   const [cameraPermissionInformation, requestPermission] =
@@ -52,6 +52,7 @@ const ImagePicker = () => {
     });
 
     setPickedImage(image.uri);
+    onTakeImage(image.uri);
   };
 
   return (

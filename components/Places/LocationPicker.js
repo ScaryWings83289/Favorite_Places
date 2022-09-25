@@ -1,7 +1,11 @@
 // Packages Imports
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Alert, Image, Text, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  useIsFocused,
+} from "@react-navigation/native";
 import {
   getCurrentPositionAsync,
   useForegroundPermissions,
@@ -12,18 +16,55 @@ import {
 import CustomOutlinedButton from "../Inputs/CustomOutlinedButton";
 
 // Utils Imports
-import { getMapPreview } from "../../utils/location";
+import { getMapPreview, getAddress } from "../../utils/location";
 
 // Constants Imports
 import { Colors } from "../../constants/colors";
 
-const LocationPicker = () => {
+const LocationPicker = ({ onPickLocation }) => {
   const [pickedLocation, setPickedLocation] = useState("");
+  const [locationCoordinates, setLocationCoordinates] = useState({
+    long: "",
+    lat: "",
+  });
 
   const navigation = useNavigation();
+  const route = useRoute();
+  const isFocused = useIsFocused();
+
   const [locationPermissionInformation, requestPermission] =
     useForegroundPermissions();
 
+  // Get picked location from map screen
+  useEffect(() => {
+    if (isFocused && route.params) {
+      const imagePreview = getMapPreview(
+        route?.params?.pickedLng,
+        route?.params?.pickedLat
+      );
+      setPickedLocation(imagePreview);
+      setLocationCoordinates({
+        long: route?.params?.pickedLng,
+        lat: route?.params?.pickedLat,
+      });
+    }
+  }, [route, isFocused]);
+
+  // Passing picked location to parent components
+  useEffect(() => {
+    const handleLocation = async () => {
+      if (pickedLocation) {
+        const address = await getAddress(
+          locationCoordinates.long,
+          locationCoordinates.lat
+        );
+        onPickLocation({ ...locationCoordinates, address: address });
+      }
+    };
+    handleLocation();
+  }, [locationCoordinates, onPickLocation]);
+
+  // Verify Location Permission
   const verifyPermissions = async () => {
     if (
       locationPermissionInformation.status === PermissionStatus.UNDETERMINED
@@ -56,6 +97,10 @@ const LocationPicker = () => {
       location.coords.latitude
     );
     setPickedLocation(imagePreview);
+    setLocationCoordinates({
+      long: location.coords.longitude,
+      lat: location.coords.latitude,
+    });
   };
 
   // Handle redirection to map screen
