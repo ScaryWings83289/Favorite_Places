@@ -14,15 +14,23 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
+      "buildNumber": "1.0.0",
       "supportsTablet": true
     },
     "android": {
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.scarywings83289.Favoriteplaces"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -34,6 +42,11 @@
           "cameraPermission": "The app needs access to your camera in order to take photos of your favorite places."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "2bc2a628-2b3e-452e-a0c3-aaace51fe38b"
+      }
+    }
   }
 }
